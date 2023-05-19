@@ -1,0 +1,226 @@
+<!---loading the static file into the template-->
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Donxcel Professional portfolio creation
+
+-->
+
+<html>
+	<head>
+		<script>
+			var texts = ["machine learning engineer!", "data analyst in python", " currently working in django backend web development"];
+			var textIndex = 0;
+			var charIndex = 0;
+			var speed = 500; // Time between each loop (in milliseconds)
+			var timer;
+	
+			function writeText() {
+				 var target = document.getElementById("text");
+  target.innerHTML += texts[textIndex].charAt(charIndex);
+
+  charIndex++;
+
+  if (charIndex >= texts[textIndex].length) {
+    clearInterval(timer);
+    setTimeout(cancelWriting, speed);
+				}
+			}
+	
+			function cancelWriting() {
+				timer = setInterval(deleteText, 50);
+			}
+	
+			function deleteText() {
+				var currentText = document.getElementById("text").innerHTML;
+				if (currentText.length > 0) {
+					document.getElementById("text").innerHTML = currentText.slice(0, -1);
+				} else {
+					clearInterval(timer);
+					textIndex++;
+					if (textIndex >= texts.length) {
+						textIndex = 0;
+					}
+					setTimeout(startWriting, speed);
+				}
+			}
+	
+			function startWriting() {
+				charIndex = 0;
+				timer = setInterval(writeText, 100);
+			}
+	
+			window.onload = function() {
+				startWriting();
+			};
+		</script>
+		<title>DONXCEL PORTFOLIO</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" type = "text/css" href="{% static 'css/main.css' %}" />
+	</head>
+	<body class="is-preload">
+		{% for information in info %}
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<a href="{{ information.cv_link}}" class="image avatar"><img src="{{ information.image_profile.url}}" alt="" /></a>
+					<!---creating the link to rthe-->
+
+					<h3>
+					<div id = "texts">
+						click the link or Bio to view my <a href="{{ information.cv_link}}">	CV</a>.
+					</div></h3>
+					<h1><strong>I am {{information.first_name}} </strong></h1>
+		
+	
+<strong>
+	 <h4 id="text" style="height:min-content;color: blanchedalmond;"></h4>
+				</strong>
+			</h1>	
+			</header>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- One -->
+					<p id="one">
+						<header class="major">
+							<h2><strong>About me</strong><br />
+								</h2>
+						</header>
+						{{information.title_description}}
+						<br>
+						<div  id="long-text" style="display:none">
+							<p>I am an enthusiast and passionate for this field and have deep desire to succeed In this position... I believe I will be an excellent fit for the team and company culture. 
+							I always strive to expect the best out of myself and can easily work under pressure 
+								<br>
+							I am also eager to learn and grow from my team and the company in this field and help the company later on to be one of the best out there.. 
+							<br>
+							I am innovative, creative and collaborative team member who is able to work with others effectively and attain desired goals and objectives 
+							<br>
+							I am also professional committed In delivering high level results.</p>
+							<br>
+						</div>
+						<button id="show-button" onclick="toggleText()">Show more</button>
+					</section>
+
+				<!-- Two -->
+				
+					<div class="portfolio">
+						<br>
+						<h2>Project Work</h2>
+					
+							<div class="project-grid">
+								
+								 {% for test in projects %}
+									<a href="{{test.link }}" class="project"><img src="{{ test.image_description.url }}" alt="" />
+									<h3>{{ test.title }}</h3>
+									</a>
+								 {% endfor %}
+							
+							</div>
+					</div>
+
+				<!-- Three -->
+					<section id="three">
+						<h2>Get In Touch</h2>
+						<p>Thankyou for going through my review and I hope to have a positive feedback</p>
+						
+						<!--Creating the form of the class -->
+						<div class="row">
+							<div class="col-8 col-12-small">
+								<form method="post" action="{% url 'contact' %}">
+									{% csrf_token %}
+									<div class="row gtr-uniform gtr-50">
+										<div class="col-6 col-12-xsmall"><input type="text" name="name" id="name" placeholder="Name" value="{{ request.POST.name }}" required>
+											{% if form.name.errors %}
+											<span class="text-danger">{{ form.name.errors|join:", " }}</span>
+										{% endif %}
+										</div>
+
+										<div class="col-6 col-12-xsmall"><input type="email" name="email" id="email" placeholder="Email" value="{{ request.POST.email }}" required>
+											{% if form.email.errors %}
+											<span class="text-danger">{{ form.email.errors|join:", " }}</span>
+										{% endif %}
+										</div>
+
+										<div class="col-12"><textarea name="message" id="message" placeholder="Message" rows="4">{{ request.POST.message }}</textarea>
+
+											{% if form.message.errors %}
+											<span class="text-danger">{{ form.message.errors|join:", " }}</span>
+											{% endif %}
+
+										</div>
+									</div>
+									<ul class="actions">
+										<li><input type="submit" value="Send Message" /></li>
+									</ul>
+								</form>
+								
+							</div>
+							<div class="col-4 col-12-small">
+								<ul class="labeled-icons">
+									<li>
+										<h3 class="icon solid fa-home"><span class="label">Address</span></h3>
+										{{information.quarter}}.<br />
+										{{information.region}}<br />
+										{{information.country}}
+									</li>
+									<li>
+										<h3 class="icon solid fa-mobile-alt"><span class="label">Phone</span></h3>
+										{{information.phone}}
+									</li>
+									<li>
+										<h3 class="icon solid fa-envelope"><span class="label">Email</span></h3>
+										<a href="#">legimadonxcel123@gmail.com</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+
+
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner" style="height: 1000px;">
+					<ul class="icons">
+						<li><a href="{{information.linkedin_link}}" class="icon brands fa-linkedin-in"><span class="label">linkedin</span></a></li>
+						<li><a href="{{information.github_link}}" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="{{information.email_link}}" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; donxcel</li><li></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="{% static 'js/jquery.min.js'%}"></script>
+			<script src="{% static 'js/jquery.poptrox.min.js' %}"></script>
+			<script src="{% static 'js/browser.min.js' %}"></script>
+			<script src="{% static 'js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'js/util.js' %}"></script>
+			<script src="{% static 'js/main.js' %}"></script>
+		{% endfor %}
+
+	</body>
+
+	<script>
+		function toggleText() {
+		  var text = document.getElementById("long-text");
+		  var button = document.getElementById("show-button");
+		  if (text.style.display === "none") {
+			text.style.display = "block";
+			button.innerHTML = "Show less";
+		  } else {
+			text.style.display = "none";
+			button.innerHTML = "Show more";
+		  }
+		}
+	 
+	</script>
+</html>
